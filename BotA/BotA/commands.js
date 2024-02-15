@@ -30,7 +30,6 @@ async function portfolio(interaction) {
         user = interaction.user;
     }
 
-    console.log(user.username);
     await interaction.reply(`Mostrando portfólio de ${user.username}.`);
 }
 

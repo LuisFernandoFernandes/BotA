@@ -10,6 +10,24 @@ const db = connectDatabase();
 client.once("ready", async () => {
     console.log(`Bot está pronto como ${client.user.tag}!`);
 
+    const existingCommands = await client.application.commands.fetch();
+
+    const commandNames = Object.keys(commands);
+
+    const commandsToDelete = existingCommands.filter(
+        (command) => !commandNames.includes(command.name)
+    );
+
+    // Exclui os comandos que não estão na lista
+    for (const command of commandsToDelete.values()) {
+        try {
+            await client.application.commands.delete(command.id);
+            console.log(`Comando ${command.name} removido com sucesso`);
+        } catch (error) {
+            console.error(`Erro ao remover o comando ${command.name}:`, error);
+        }
+    }
+
     for (const commandName in commands) {
         client.user.setActivity(`/${commandName}`, { type: "WATCHING" });
     }
@@ -31,6 +49,9 @@ client.on("interactionCreate", async (interaction) => {
 
     const { commandName, options } = interaction;
     const commandFunction = commands[commandName];
+    console.log(commands);
+    console.log(commandName);
+    console.log(commandFunction);
 
     if (typeof commandFunction === "function") {
         await commandFunction(interaction, options);
