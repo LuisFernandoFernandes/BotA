@@ -49,7 +49,7 @@ const commandsData = [
         ],
     },
     {
-        name: "portifolio",
+        name: "portfolio",
         description: "Mostra a carteira de ações de um usuário.",
         options: [
             {
