@@ -16,10 +16,6 @@ function connectDatabase() {
                             "Erro ao criar tabela de movimentacoes:",
                             err.message
                         );
-                    } else {
-                        console.log(
-                            "Tabela de movimentacoes criada com sucesso."
-                        );
                     }
                 }
             );

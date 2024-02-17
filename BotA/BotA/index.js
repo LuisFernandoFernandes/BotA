@@ -5,7 +5,7 @@ const { commandsData } = require("./commandsData.js");
 const { token } = require("../config.json");
 const client = new Discord.Client({ intents: 32767 });
 
-const db = connectDatabase();
+connectDatabase();
 
 client.once("ready", async () => {
     console.log(`Bot está pronto como ${client.user.tag}!`);
@@ -18,7 +18,6 @@ client.once("ready", async () => {
         (command) => !commandNames.includes(command.name)
     );
 
-    // Exclui os comandos que não estão na lista
     for (const command of commandsToDelete.values()) {
         try {
             await client.application.commands.delete(command.id);
@@ -34,10 +33,7 @@ client.once("ready", async () => {
 
     try {
         for (const commandData of commandsData) {
-            const command = await client.application?.commands.create(
-                commandData
-            );
-            console.log("Comando criado:", command);
+            await client.application?.commands.create(commandData);
         }
     } catch (error) {
         console.error("Erro ao criar comando:", error);
@@ -49,9 +45,6 @@ client.on("interactionCreate", async (interaction) => {
 
     const { commandName, options } = interaction;
     const commandFunction = commands[commandName];
-    console.log(commands);
-    console.log(commandName);
-    console.log(commandFunction);
 
     if (typeof commandFunction === "function") {
         await commandFunction(interaction, options);
