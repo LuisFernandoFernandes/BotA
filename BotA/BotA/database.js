@@ -39,4 +39,24 @@ function cadastrarPosicao(usuarioId, ticker, tipo, preco, quantidade) {
     );
 }
 
-module.exports = { connectDatabase, cadastrarPosicao };
+function consultarMovimentacoes(usuarioId) {
+    return new Promise((resolve, reject) => {
+        db.all(
+            "SELECT * FROM movimentacoes WHERE usuario_id = ?",
+            [usuarioId],
+            (err, rows) => {
+                if (err) {
+                    console.error(
+                        "Erro ao consultar movimentações:",
+                        err.message
+                    );
+                    reject(err);
+                } else {
+                    resolve(rows);
+                }
+            }
+        );
+    });
+}
+
+module.exports = { connectDatabase, cadastrarPosicao, consultarMovimentacoes };
