@@ -9,7 +9,7 @@ function connectDatabase() {
         } else {
             console.log("Conexão com o banco de dados estabelecida.");
             db.run(
-                "CREATE TABLE IF NOT EXISTS movimentacoes (id INTEGER PRIMARY KEY AUTOINCREMENT, usuario_id TEXT, ticker TEXT, tipo TEXT, preco REAL, quantidade REAL)",
+                "CREATE TABLE IF NOT EXISTS movimentacoes (id INTEGER PRIMARY KEY AUTOINCREMENT, usuario_id TEXT, ticker TEXT, tipo TEXT, preco REAL, quantidade REAL, data TEXT)",
                 (err) => {
                     if (err) {
                         console.error(
@@ -25,10 +25,10 @@ function connectDatabase() {
     return db;
 }
 
-function cadastrarPosicao(usuarioId, ticker, tipo, preco, quantidade) {
+function cadastrarPosicao(usuarioId, ticker, tipo, preco, quantidade, data) {
     db.run(
-        "INSERT INTO movimentacoes (usuario_id, ticker, tipo, preco, quantidade) VALUES (?, ?, ?, ?, ?)",
-        [usuarioId, ticker, tipo, preco, quantidade],
+        "INSERT INTO movimentacoes (usuario_id, ticker, tipo, preco, quantidade, data) VALUES (?, ?, ?, ?, ?, ?)",
+        [usuarioId, ticker, tipo, preco, quantidade, data],
         (err) => {
             if (err) {
                 console.error("Erro ao cadastrar posição:", err.message);
