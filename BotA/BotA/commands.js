@@ -1,5 +1,5 @@
-const { cadastrarPosicao } = require("./database.js");
 const { consultarMovimentacoes } = require("./database.js");
+const { database } = require("./database.js");
 
 async function trade(interaction) {
     const tipo = interaction.options.getString("tipo");
@@ -25,7 +25,7 @@ async function trade(interaction) {
         data = `${day}/${month}/${year}-${hours}:${minutes}:${seconds}`;
     }
 
-    await cadastrarPosicao(
+    database.cadastrarPosicao(
         interaction.user.id,
         ticker,
         tipo,
@@ -40,14 +40,14 @@ async function trade(interaction) {
 }
 
 async function portfolio(interaction) {
-    let user = interaction.options.getUser("usuario");
-    if (!user) {
-        user = interaction.user;
-    }
+    const user = getUser(interaction);
+    const query = "SELECT * FROM movimentacoes WHERE usuario_id = ?";
+    const params = [user.id];
+    const error = "Erro ao consultar movimentações:";
 
     try {
         const posicoes = await getPositions(
-            await consultarMovimentacoes(user.id)
+            await database.getConsulta(query, params, error)
         );
 
         let response = `Portfólio de ${user.username}:\n`;
@@ -126,8 +126,73 @@ function agruparMovimentacoesPorTicker(movimentacoes) {
     return movimentacoesPorTicker;
 }
 
+async function showtrades(interaction) {
+    const userId = await getUser(interaction).id;
+    const options = interaction.options;
+    const tipo = options.getString("tipo");
+    const ticker = options.getString("ticker")?.toUpperCase();
+    const dataInicial = options.getString("dataInicial");
+    const dataFinal = options.getString("dataFinal");
+
+    let query = "SELECT * FROM movimentacoes WHERE usuario_id = ?";
+    let params = [userId];
+
+    if (ticker) {
+        query += " AND ticker = ?";
+        params.push(ticker);
+    }
+
+    if (tipo) {
+        query += " AND tipo = ?";
+        params.push(tipo);
+    }
+
+    if (dataInicial && dataFinal) {
+        const dataInicialFormatada = formatarData(dataInicial);
+        const dataFinalFormatada = formatarData(dataFinal);
+        query += " AND data BETWEEN ? AND ?";
+        params.push(dataInicialFormatada, dataFinalFormatada);
+    }
+
+    try {
+        const movimentacoes = await database.getConsulta(query, params);
+        let response = `Movimentações do usuário:\n`;
+        movimentacoes.forEach((movimentacao) => {
+            response += `${movimentacao.data}    ${movimentacao.tipo}    ${movimentacao.ticker}    ${movimentacao.quantidade}    R$${movimentacao.preco}\n`;
+        });
+        await interaction.reply(response);
+    } catch (error) {
+        await interaction.reply(
+            "Ocorreu um erro ao consultar as movimentações."
+        );
+    }
+}
+
+function formatarData(data) {
+    const partesData = data.split("/");
+    const dia = partesData[0];
+    const mes = partesData[1];
+    const ano =
+        partesData.length === 2
+            ? new Date().getFullYear().toString().slice(-2)
+            : partesData[2].slice(-2);
+
+    return `${dia}/${mes}/${ano}-${new Date().toLocaleTimeString("pt-BR", {
+        hour12: false,
+    })}`;
+}
+
+function getUser(interaction) {
+    let user = interaction.options.getUser("usuario");
+    if (!user) {
+        user = interaction.user;
+    }
+    return user;
+}
+
 const commands = {
     trade: trade,
+    showtrades: showtrades,
     portfolio: portfolio,
 };
 
