@@ -1,11 +1,11 @@
 const Discord = require("discord.js");
-const { connectDatabase } = require("./database.js");
+const { database } = require("./database.js");
 const { commands } = require("./commands.js");
 const { commandsData } = require("./commandsData.js");
 const { token } = require("../config.json");
 const client = new Discord.Client({ intents: 32767 });
 
-connectDatabase();
+database.connectDatabase();
 
 client.once("ready", async () => {
     console.log(`Botou o bot como ${client.user.tag}!`);
