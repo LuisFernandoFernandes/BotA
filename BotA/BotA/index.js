@@ -8,7 +8,7 @@ const client = new Discord.Client({ intents: 32767 });
 connectDatabase();
 
 client.once("ready", async () => {
-    console.log(`Bot está pronto como ${client.user.tag}!`);
+    console.log(`Botou o bot como ${client.user.tag}!`);
 
     const existingCommands = await client.application.commands.fetch();
 
