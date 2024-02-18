@@ -46,6 +46,13 @@ const commandsData = [
                 type: 10,
                 required: true,
             },
+            {
+                name: "data",
+                description:
+                    "A data da movimentação (formato: DD/MM/AAAA-HH:MM:SS).",
+                type: 3,
+                required: false,
+            },
         ],
     },
     {
