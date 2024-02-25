@@ -1,1 +1,45 @@
-BotA/config.json
+# Logs
+logs
+*.log
+
+# Arquivos temporários
+*.tmp
+
+# Arquivos de build ou saída
+build/
+dist/
+out/
+
+# Dependências específicas do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos de ambiente
+.env
+.env.local
+.env.*.local
+
+# Arquivos de cache
+.cache/
+
+# Arquivos de pacotes
+*.pem
+*.pfx
+*.key
+
+# Arquivos de editor
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+
+# Arquivos de backup
+*~
+*.bak
+
+
+# Arquivos específicos
+config.json
+
+# Pastas
+node_modules/
