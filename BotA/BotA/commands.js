@@ -1,4 +1,4 @@
-const { consultarMovimentacoes } = require("./database.js");
+const axios = require("axios");
 const { database } = require("./database.js");
 
 async function trade(interaction) {
@@ -190,10 +190,51 @@ function getUser(interaction) {
     return user;
 }
 
+async function stock(interaction) {
+    const ticker = interaction.options.getString("ticker");
+
+    const url = `http://localhost:5000/companyinfo/stock/${ticker}`;
+    console.log(url);
+
+    try {
+        const response = await axios.get(url);
+
+        if (response.status !== 200) {
+            throw new Error(`Erro ao obter os dados da ação ${ticker}`);
+        }
+
+        const data = response.data;
+
+        // Exibe os dados da ação
+        let message = `Dados da ação ${ticker}:\n`;
+        let responseData = JSON.stringify(data, null, 2);
+
+        // Divide a mensagem em partes menores
+        const maxLength = 1900; // Limite de caracteres por mensagem
+        let parts = [];
+        while (responseData.length > 0) {
+            parts.push(responseData.slice(0, maxLength));
+            responseData = responseData.slice(maxLength);
+        }
+
+        // Envia a primeira parte da mensagem como resposta inicial
+        await interaction.reply(parts.shift());
+
+        // Envia as partes restantes como mensagens de acompanhamento
+        for (const part of parts) {
+            await interaction.followUp(part);
+        }
+    } catch (error) {
+        console.error("Erro ao fazer a requisição:", error);
+        await interaction.reply(`Erro ao obter os dados da ação ${ticker}`);
+    }
+}
+
 const commands = {
     trade: trade,
     showtrades: showtrades,
     portfolio: portfolio,
+    stock: stock,
 };
 
 module.exports = { commands };

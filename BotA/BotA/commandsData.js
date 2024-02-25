@@ -126,6 +126,18 @@ const commandsData = [
             },
         ],
     },
+    {
+        name: "stock",
+        description: "Mostra os dados de um determinado ativo.",
+        options: [
+            {
+                name: "ticker",
+                description: "O ticker da ação.",
+                type: 3,
+                required: true,
+            },
+        ],
+    },
 ];
 
 module.exports = { commandsData };
